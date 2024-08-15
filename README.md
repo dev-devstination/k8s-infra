@@ -37,31 +37,15 @@ kubectl apply -f ./traefik/traefik-pv-pvc.yaml
 # Create Traefik Deployment and Service
 ```bash
 kubectl  apply -f ./traefik/traefik-deployment.yaml
-```  
-# Create ElasticSearch Single Instance and Kibana Deployment and Service.
-# Consider ElasticSearch Cluster for Production/Large-scale environment.
-```bash
-kubectl apply -f ./ElasticSearch-Kibana-SingleInsatnce/pvc.yaml
-kubectl apply -f ./ElasticSearch-Kibana-SingleInsatnce/statefulSet.yaml
-kubectl apply -f ./ElasticSearch-Kibana-SingleInsatnce/kibana.yaml
-```
 --------------------------------------------
 ### Deploy devstinaiton BE/FE services ###
 # Github actions configured to trigger/auto-deploy devstinaiton, devstinaitonnodejs and devstinaiton-new-front services to k8s cluster
 # development branch >> k8s-staging-cluster
 # main branch >> k8s-production-cluster
 # Github actions jobs to deploy k8s-staging environment
-https://github.com/Devstinaiton/devstinaiton/blob/development/.github/workflows/staging-ci.yml  
-https://github.com/Devstinaiton/devstinaitonnodejs/blob/development/.github/workflows/staging-ci.yml  
-https://github.com/Devstinaiton/devstinaiton-new-front/blob/development/.github/workflows/staging-ci.yml  
-
+https://github.com/dev-devstination/api/blob/development/.github/workflows/development-ci.yml
+https://github.com/dev-devstination/cost-etimation-panel
 --------------------------------------------
-### Deploy devstinaiton Admin and Admin-BE services ###
-# Github actions configured to trigger/auto-deploy Admin and Admin-BE services to k8s cluster
-
-https://github.com/Devstinaiton/devstinaiton-admin-backend/blob/development/.github/workflows/staging-ci.yml  
-https://github.com/Devstinaiton/devstinaiton-admin/blob/development/.github/workflows/staging-ci.yml  
-
 # Create required devstinaiton IngressRoute
 ```bash
 kubectl  -n devstinaiton apply -f ./traefik/ingressroute.yaml  
