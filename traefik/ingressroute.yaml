@@ -1,0 +1,34 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: stripprefix
+  namespace: devstinaiton
+
+spec:
+  stripPrefix:
+    prefixes:
+      - /api
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: devstinaiton-stack
+  namespace: devstinaiton
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`devstinaiton.dev`)
+      services:
+        - name: front-end
+          port: 3000
+    - kind: Rule
+      match: Host(`devstinaiton.dev`) && PathPrefix(`/api`)
+      middlewares:
+        - name: stripprefix
+          namespace: devstinaiton
+      services:
+        - name: devstinaiton-api
+          port: 8080

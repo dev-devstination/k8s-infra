@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: devstinaiton-logging
+  namespace: loki
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match:  Host(`loki.devstinaiton.dev`)
+      kind: Rule
+      services:
+        - name: loki-grafana
+          port: 80

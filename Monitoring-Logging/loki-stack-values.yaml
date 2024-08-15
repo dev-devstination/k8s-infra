@@ -1,0 +1,90 @@
+loki:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 100Gi
+    mountPath: "/data"
+  # If the filesyste is set to filesystem >> Loki  must be installed as a single replica not scalable HA
+  # It is not possible to run the scalable mode with the fulesystem storage.
+  # https://grafana.com/docs/loki/latest/installation/helm/install-scalable/
+  # https://grafana.com/docs/loki/latest/installation/helm/install-monolithic/
+  commonConfig:
+    replication_factor: 1
+  storage:
+    type: 'filesystem'# Storage
+    # Fix the permission issue
+  # Should authentication be enabled
+  auth_enabled: false
+
+  # -- Limits config
+  limits_config:
+    enforce_metric_name: false
+    reject_old_samples: true
+    max_cache_freshness_per_query: 10m
+    split_queries_by_interval: 15m
+    retention_period: 720h
+
+  # -- Check https://grafana.com/docs/loki/latest/configuration/#schema_config for more info on how to configure schemas
+  schema_config:
+    configs:
+      - from: 2020-07-01
+        store: boltdb
+        object_store: filesystem
+        schema: v11
+        index:
+          prefix: devstinaiton_index_
+          period: 720h
+
+
+  # -- Additional storage config
+  storage_config:
+    boltdb_shipper:
+      active_index_directory: /data/loki/boltdb-shipper-active
+      cache_location: /data/loki/boltdb-shipper-cache
+      cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
+      shared_store: filesystem
+    filesystem:
+      directory: /data/loki/chunks
+
+  # --  Optional compactor configuration
+  compactor:
+    retention_enabled: true
+    retention_delete_delay: 2h
+    retention_delete_worker_count: 150
+
+  chunk_store_config:
+    max_look_back_period: 720h
+
+
+promtail:
+  enabled: true
+  config:
+    lokiAddress: http://{{ .Release.Name }}:3100/loki/api/v1/push
+
+fluent-bit:
+  enabled: false
+
+prometheus:
+  enabled: false
+  isDefault: false
+  url: http://{{ include "prometheus.fullname" .}}:{{ .Values.prometheus.server.service.servicePort }}{{ .Values.prometheus.server.prefixURL }}
+  datasource:
+    jsonData: {}
+
+
+grafana:
+  enabled: true
+  sidecar:
+    datasources:
+      enabled: true
+      maxLines: 1000
+  image:
+   tag: 10.0.2
+  persistence:
+    enabled: true
+    size: 10Gi
+  adminPassword: 'LKbq@DwE*CCw'
+  grafana.ini:
+    server:
+      root_url: http://localhost:3000/grafana/
+      serve_from_sub_path: true
