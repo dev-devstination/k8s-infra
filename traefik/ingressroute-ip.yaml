@@ -17,18 +17,10 @@ metadata:
 spec:
   entryPoints:
     - web
-    - websecure
+#    - websecure
   routes:
     - kind: Rule
-      match: Host(`devstination.com`)
-      services:
-        - name: cost-estimation
-          port: 3000
-    - kind: Rule
-      match: Host(`devstination.com`) && PathPrefix(`/api`)
-      middlewares:
-        - name: stripprefix
-          namespace: devstination
+      match: Host(`143.198.248.237`)
       services:
         - name: devstination-api
           port: 8080
